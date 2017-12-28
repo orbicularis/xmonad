@@ -1,0 +1,5 @@
+XTerm.vt100.foreground: green
+XTerm.vt100.background: black
+XTerm*faceName: SourceCodePro-Regular
+XTerm*faceSize: 8
+XTerm*selectToClipboard: True
