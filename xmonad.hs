@@ -14,7 +14,7 @@ import Graphics.X11.ExtraTypes.XF86
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Actions.WorkspaceNames
-import XMonad.HooksManageHelpers
+import XMonad.Hooks.ManageHelpers
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -211,7 +211,6 @@ myLayout = tiled ||| Mirror tiled ||| Full
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
 
-
 --------------------------------------------------------------------------
 -- Window rules:
 
@@ -227,8 +226,9 @@ myLayout = tiled ||| Mirror tiled ||| Full
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook = composeAll
-    [ className =? "Galculator"     --> doFloat
+myManageHook = composeOne
+    [ className =? "Galculator"     --> doCenterFloat
+    , className =? "Dropbox"        --> doCenterFloat
     , className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
