@@ -15,6 +15,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Actions.WorkspaceNames
 import XMonad.Hooks.ManageHelpers
+import XMonad.ManageHook
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -227,12 +228,11 @@ myLayout = tiled ||| Mirror tiled ||| Full
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeOne
-    [ className =? "Galculator"     --> doCenterFloat
-    , className =? "Dropbox"        --> doCenterFloat
-    , className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore 
+    [ className =? "Galculator"     -?> doCenterFloat
+    , className =? "MPlayer"        -?> doFloat
+    , className =? "Gimp"           -?> doFloat
+    , resource  =? "desktop_window" -?> doIgnore
+    , resource  =? "kdesktop"       -?> doIgnore 
     , manageDocks
     ]
 
