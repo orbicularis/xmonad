@@ -1,0 +1,24 @@
+#!/bin/bash
+
+status="$(dropbox-cli status)"
+
+case "$status" in
+	"Up to date")
+		echo "Dropbox: $status" ;;
+	Syncing*)
+		echo "Dropbox: $status" ;;
+	*)
+		echo "Dropbox: $status" ;;
+esac
+
+## This was the original script ---------
+#status="$(dropbox-cli status)"
+#
+#case "$status" in
+#	"Up to date")
+#		echo "#" ;;
+#	Syncing*)
+#		echo "#" ;;
+#	*)
+#		echo "# $status" ;;
+#esac
