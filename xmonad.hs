@@ -227,12 +227,12 @@ myLayout = tiled ||| Mirror tiled ||| Full
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook = composeOne
-    [ className =? "Galculator"     -?> doCenterFloat
-    , className =? "MPlayer"        -?> doFloat
-    , className =? "Gimp"           -?> doFloat
-    , resource  =? "desktop_window" -?> doIgnore
-    , resource  =? "kdesktop"       -?> doIgnore 
+myManageHook = composeAll
+    [ className =? "Galculator"     --> doCenterFloat
+    , className =? "MPlayer"        --> doFloat
+    , className =? "Gimp"           --> doFloat
+    , resource  =? "desktop_window" --> doIgnore
+    , resource  =? "kdesktop"       --> doIgnore 
     , manageDocks
     ]
 
