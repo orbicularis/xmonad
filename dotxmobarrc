@@ -1,14 +1,16 @@
 Config { 
-         font = "xft:SourceCodePro:size=8:Medium:antialias=true"
+         font = "xft:SourceCodePro:size=7:Medium:antialias=true"
        , bgColor = "black"
        , fgColor = "gray"
        , position = TopW L 100
-       , commands = [ Run Weather "KLAX" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
-                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+       , commands = [ Run Weather "KLAX" ["-t", "<tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
+                    , Run Cpu ["-t", "CPU: <total>%", "-L","3","-H","50","--normal","green","--high","red"] 10
                     , Run Memory ["-t","Mem: <usedratio>%"] 10
                     , Run Swap [] 10
-                    , Run Date "%a %b %_d%l:%M" "date" 10
+                    , Run Date "%a %b %_d %_I:%M" "date" 10
                     , Run StdinReader
+                    , Run Volume "default" "Master" ["-t", "<volume>% <status>"] 10
+                    , Run Com "xmobar-dropbox-status" [] "dropbox" 10
                     , Run BatteryP   ["BAT0"]
                                      [ "--template" , "Batt: <acstatus>"
                                      , "--Low"      , "10" -- units: %
@@ -22,8 +24,13 @@ Config {
                                             -- AC on status
                                             , "-O" , "<fc=dAA520>Charging</fc>"
                                             -- charged status
-                                            , "-i" , "<fc=006000>Charged</fc>" ] 10
-                    , Run DynNetwork [ "--template" , "<wlp2s0>: <tx>kB/s <rx>kB/s"
+                                            , "-i" , "<fc=006000>Charged</fc>" ] 600
+	            , Run Wireless "wlp2s0" [ "--template", "SSID: <fc=#006400><essid></fc> SIG: <quality>"
+                                            , "--Low"     , "49" -- percent
+                                            , "--High"    , "50" -- percent
+                                            , "--low"     , "#ff0000"
+                                            , "--high"    , "#006400" ] 10
+                    , Run DynNetwork [ "--template" , "U:<tx>kB/s D:<rx>kB/s"
                                      , "--Low"      , "1000" -- units: B/s
                                      , "--High"     , "5000" -- units: B/s
                                      , "--low"      , "darkgreen"
@@ -32,5 +39,5 @@ Config {
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %dynnetwork% %battery% %cpu% | %memory%, %swap% | <fc=#ee9a00>%date%</fc> |%KLAX%"
+       , template = "%StdinReader% }{ %dropbox% | Sound: %default:Master% | %wlp2s0wi% %dynnetwork% | %battery% | %cpu% | %memory% | <fc=#ee9a00>%date%</fc> | %KLAX%"
        }
