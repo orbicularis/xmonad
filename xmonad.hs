@@ -16,6 +16,8 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Actions.WorkspaceNames
 import XMonad.Hooks.ManageHelpers
 import XMonad.ManageHook
+-- Data.List provides isPrefixOf isSuffixOf and isInfixOf
+import Data.List 
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -80,11 +82,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- PLACEHOLDER to create script to control keyboard backlights
     --, ((0, xF86XK_KbdBrightnessDown), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
 
-    -- launch dmenu "demenu_run" instead of "rofi"
+    -- launch dmenu "demenu_run" or rofi
+    -- , ((modm,               xK_d     ), spawn "dmenu_run")
     , ((modm,               xK_d     ), spawn "rofi -show run")
 
     -- launch gmrun
-    , ((modm .|. shiftMask, xK_p     ), spawn "gmrun")
+    -- , ((modm .|. shiftMask, xK_p     ), spawn "gmrun")
  
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
@@ -226,15 +229,35 @@ myLayout = tiled ||| Mirror tiled ||| Full
 --
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
+-- First is a simple way of managing how these apps appear
+--myManageHook = composeAll
+--    [ className =? "Galculator"     --> doCenterFloat
+--    , className =? "MPlayer"        --> doFloat
+--    , className =? "Gimp"           --> doFloat
+--    , resource  =? "desktop_window" --> doIgnore
+--    , resource  =? "kdesktop"       --> doIgnore 
+--    , manageDocks
+--    ]
+
+-- This is a more flexible way, including class actions and actions
+-- for specific window names.
+-- "doShift" sends the app (or window) the indicated workspace.
 --
-myManageHook = composeAll
-    [ className =? "Galculator"     --> doCenterFloat
-    , className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore 
-    , manageDocks
-    ]
+myManageHook = composeAll . concat $
+   [ [ className =? "Firefox" --> doShift "3" ]
+--   , [ className =? "Gajim.py"    --> doShift "jabber" ]
+--   , [(className =? "Firefox" <&&> resource =? "Dialog") --> doFloat]
+   , [ className =? "Galculator" --> doCenterFloat]
+ 
+     -- using list comprehensions and partial matches
+   , [ className =?  c --> doFloat | c <- myFloatsC ]
+   , [ fmap ( c `isInfixOf`) className --> doFloat | c <- myMatchAnywhereFloatsC ]
+   , [ fmap ( c `isInfixOf`) title     --> doCenterFloat | c <- myMatchAnywhereFloatsT ]
+   ]
+   -- in a composeAll hook, you'd use: fmap ("VLC" `isInfixOf`) title --> doFloat
+  where myFloatsC = ["Gajim.py", "Xmessage"]
+        myMatchAnywhereFloatsC = ["Google","Pidgin"]
+        myMatchAnywhereFloatsT = ["VLC","Write","Preferences","Address"]
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -277,6 +300,9 @@ main = xmonad =<< statusBar myBar myPP toggleStrutsKey myConfig
 myBar = "xmobar"
 myPP = xmobarPP { ppCurrent = xmobarColor "#429942" "" . wrap "<" ">" }
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+--
+-- There are mutiple locations in this file where the mod key can be set;
+-- this is the one currently in use:
 myConfig = defaults {modMask = mod4Mask}
 
 -- A structure containing your configuration settings, overriding
