@@ -76,11 +76,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0, xF86XK_AudioMute          ), spawn "amixer set Master toggle")
     , ((0, xF86XK_Calculator         ), spawn "galculator")
 
-    -- toggleStrutsKey XConfig {XMonad.modMask = modMask} = 
-    -- , ((modm,               xK_b     ))
-
-    -- PLACEHOLDER to create script to control keyboard backlights
-    --, ((0, xF86XK_KbdBrightnessDown), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+    -- Brightness keys are controlled by xfce4-power-manager
+    --, ((0, xF86XK_KbdBrightnessDown), spawn ())
 
     -- launch dmenu "demenu_run" or rofi
     -- , ((modm,               xK_d     ), spawn "dmenu_run")
@@ -248,15 +245,16 @@ myManageHook = composeAll . concat $
 --   , [ className =? "Gajim.py"    --> doShift "jabber" ]
 --   , [(className =? "Firefox" <&&> resource =? "Dialog") --> doFloat]
    , [ className =? "Galculator" --> doCenterFloat]
+--   , [ className =? "xfce4-power-manager-settings" --> doCenterFloat]
  
      -- using list comprehensions and partial matches
    , [ className =?  c --> doFloat | c <- myFloatsC ]
-   , [ fmap ( c `isInfixOf`) className --> doFloat | c <- myMatchAnywhereFloatsC ]
+   , [ fmap ( c `isInfixOf`) className --> doCenterFloat | c <- myMatchAnywhereFloatsC ]
    , [ fmap ( c `isInfixOf`) title     --> doCenterFloat | c <- myMatchAnywhereFloatsT ]
    ]
    -- in a composeAll hook, you'd use: fmap ("VLC" `isInfixOf`) title --> doFloat
   where myFloatsC = ["Gajim.py", "Xmessage"]
-        myMatchAnywhereFloatsC = ["Google","Pidgin"]
+        myMatchAnywhereFloatsC = ["Xfce4"]
         myMatchAnywhereFloatsT = ["VLC","Write","Preferences","Address"]
 
 ------------------------------------------------------------------------
